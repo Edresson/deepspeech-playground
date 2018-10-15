@@ -40,8 +40,7 @@ def main(data_directory, output_file):
                 labels.append(label)
     with open(output_file, 'w') as out_file:
         for i in range(len(keys)):
-            line = json.dumps({'key': keys[i], 'duration': durations[i],
-                              'text': labels[i]})
+            line = json.dumps(str(keys[i])+','+str(durations[i])+','+str(labels[i]))
             out_file.write(line + '\n')
 
 
