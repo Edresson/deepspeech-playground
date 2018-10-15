@@ -56,7 +56,7 @@ class DataGenerator(object):
             max_freq=self.max_freq)
 
     def load_metadata_from_desc_file(self, desc_file, partition='train',
-                                     max_duration=10.0,):
+                                     max_duration=10.0):
         """ Read metadata from the description file
             (possibly takes long, depending on the filesize)
         Params:
@@ -68,18 +68,18 @@ class DataGenerator(object):
         """
         logger.info('Reading description file: {} for partition: {}'
                     .format(desc_file, partition))
-        audio_paths, durations, texts = [], [], []
+        audio_paths, durations, texts, arpabets = [], [], [], []
         with open(desc_file) as json_line_file:
             for line_num, json_line in enumerate(json_line_file):
                 try:
-                    
-                    spec = json_line.replace('\n','').split(',')
-                    #print(json_line,spec)
-                    if float(spec[1]) > max_duration*10000 or spec[0] == 'filename':
+                    spec = json.loads(json_line)
+                    if float(spec['duration']) > max_duration:
                         continue
-                    audio_paths.append(spec[0])
-                    durations.append(float(spec[1]))
-                    texts.append(spec[2])
+                    audio_paths.append(spec['key'])
+                    durations.append(float(spec['duration']))
+                    texts.append(spec['text'])
+                    if self.use_arpabets:
+                        arpabets.append(spec['arpabet'])
                 except Exception as e:
                     # Change to (KeyError, ValueError) or
                     # (KeyError,json.decoder.JSONDecodeError), depending on
@@ -88,18 +88,24 @@ class DataGenerator(object):
                                 .format(line_num, json_line))
                     logger.warn(str(e))
 
+        if not self.use_arpabets:
+            arpabets = [''] * len(audio_paths)
+
         if partition == 'train':
             self.train_audio_paths = audio_paths
             self.train_durations = durations
             self.train_texts = texts
+            self.train_arpabets = arpabets
         elif partition == 'validation':
             self.val_audio_paths = audio_paths
             self.val_durations = durations
             self.val_texts = texts
+            self.val_arpabets = arpabets
         elif partition == 'test':
             self.test_audio_paths = audio_paths
             self.test_durations = durations
             self.test_texts = texts
+            self.test_arpabets = arpabets
         else:
             raise Exception("Invalid partition to load metadata. "
                             "Must be train/validation/test")
@@ -271,26 +277,12 @@ class DataGenerator(object):
         self.feats_mean = np.mean(feats, axis=0)
         self.feats_std = np.std(feats, axis=0)
 
-    def reload_norm(self,savefile=None,restorefile=None):
+    def reload_norm(self, dataset):
         """ Set mean and std of features from previous calculations
         Params:
-            savefile (str): used for save
-            restorefile (str):used for reload 
+            dataset (str)
         """
-        if restorefile is not None:
-            k_samples = min(k_samples, len(self.train_audio_paths))
-            samples = self.rng.sample(self.train_audio_paths, k_samples)
-            feats = [self.featurize(s) for s in samples]
-            feats = np.vstack(feats)
-            self.feats_mean = np.mean(feats, axis=0)
-            self.feats_std = np.std(feats, axis=0)
-            np.save(savefile,[self.feats_mean,self.feats_std])
-        elif restorefile  is not None:
-            x= np.load(restorefile)
-            self.feats_mean = x[0]
-            self.feats_std = x[1]
-            
-        elif savefile is None and restorefile is None:
+        if dataset == '860-1000':
             self.feats_std = np.array([
                 4.25136062, 3.8713157, 4.27721627, 4.79254968, 5.047769,
                 5.00917253, 4.92034587, 4.95192179, 4.99958183, 4.98448796,
@@ -367,5 +359,5 @@ class DataGenerator(object):
                 -25.11614341, -25.1463879, -25.16707626, -25.18893841,
                 -25.22892228, -25.26932148, -25.31942099, -25.34896047,
                 -26.51045921])
-        else:  
+        else:
             raise ValueError

@@ -52,7 +52,7 @@ def main(train_desc_file, val_desc_file, epochs, save_dir, sortagrad,
     # Use a few samples from the dataset, to calculate the means and variance
     # of the features, so that we can center our inputs to the network
     # datagen.fit_train(100)
-    datagen.reload_norm('860-1000')
+    datagen.reload_norm()
     train_sample_half_phoneme(datagen, save_dir, epochs, sortagrad,
                               start_weights, mb_size=48)
 

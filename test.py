@@ -41,7 +41,7 @@ def main(test_desc_file, model_config_file, weights_file):
     # Load the JSON file that contains the dataset
     datagen.load_validation_data(test_desc_file)
     # Normalize input data by variance and mean of training input
-    datagen.reload_norm('860-1000')
+    datagen.reload_norm()
 
     from trainer import Trainer
     trainer = Trainer(model, None, test_fn)

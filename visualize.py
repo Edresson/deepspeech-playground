@@ -126,7 +126,7 @@ def interactive_vis(model_dir, model_config, train_desc_file, weights_file=None)
         datagen.load_train_data(train_desc_file)
         datagen.fit_train(100)
     else:
-        datagen.reload_norm('860-1000')
+        datagen.reload_norm()
 
     while True:
         try:
