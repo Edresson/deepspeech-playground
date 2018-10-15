@@ -290,7 +290,7 @@ class DataGenerator(object):
             self.feats_mean = x[0]
             self.feats_std = x[1]
             
-        elif restoredir is None and restoredir is None:
+        elif savefile is None and restorefile is None:
             self.feats_std = np.array([
                 4.25136062, 3.8713157, 4.27721627, 4.79254968, 5.047769,
                 5.00917253, 4.92034587, 4.95192179, 4.99958183, 4.98448796,
