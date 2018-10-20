@@ -13,13 +13,30 @@ import os
 from data_generator import DataGenerator
 from utils import configure_logging
 
-from model_wrp import HalfPhonemeModelWrapper
+from model_wrp import HalfPhonemeModelWrapper,GruModelWrapper
 from trainer import Trainer
+from hyperparams import Hyperparams as hp
 
 logger = logging.getLogger(__name__)
 
 
 def train_sample_half_phoneme(datagen, save_dir, epochs, sortagrad,
+                              start_weights=False, mb_size=60):
+    model_wrp = GruModelWrapper()
+    model = model_wrp.compile(nodes=1000, conv_context=5, recur_layers=5)
+    logger.info('model :\n%s' % (model.to_yaml(),))
+
+    if start_weights:
+        model.load_weights(start_weights)
+
+    train_fn, test_fn = (model_wrp.compile_train_fn(1e-4),
+                         model_wrp.compile_test_fn())
+    trainer = Trainer(model, train_fn, test_fn, on_text=hp.text, on_phoneme=hp.phoneme)
+    trainer.run(datagen, save_dir, epochs=epochs, do_sortagrad=sortagrad,
+                mb_size=mb_size, stateful=False)
+    return trainer, model_wrp
+
+def train_Gru_Model(datagen, save_dir, epochs, sortagrad,
                               start_weights=False, mb_size=60):
     model_wrp = HalfPhonemeModelWrapper()
     model = model_wrp.compile(nodes=1000, conv_context=5, recur_layers=5)
@@ -30,11 +47,10 @@ def train_sample_half_phoneme(datagen, save_dir, epochs, sortagrad,
 
     train_fn, test_fn = (model_wrp.compile_train_fn(1e-4),
                          model_wrp.compile_test_fn())
-    trainer = Trainer(model, train_fn, test_fn, on_text=True, on_phoneme=True)
+    trainer = Trainer(model, train_fn, test_fn, on_text=hp.text, on_phoneme=hp.phoneme)
     trainer.run(datagen, save_dir, epochs=epochs, do_sortagrad=sortagrad,
                 mb_size=mb_size, stateful=False)
     return trainer, model_wrp
-
 
 def main(train_desc_file, val_desc_file, epochs, save_dir, sortagrad,
          use_arpabets, start_weights=None):
@@ -51,11 +67,11 @@ def main(train_desc_file, val_desc_file, epochs, save_dir, sortagrad,
     datagen.load_validation_data(val_desc_file)
     # Use a few samples from the dataset, to calculate the means and variance
     # of the features, so that we can center our inputs to the network
-    # datagen.fit_train(100)
     datagen.reload_norm()
-    train_sample_half_phoneme(datagen, save_dir, epochs, sortagrad,
-                              start_weights, mb_size=48)
-
+    batch_size = hp.batch_size
+    train_Gru_Model(datagen, save_dir, epochs, sortagrad,start_weights, mb_size=batch_size)
+    #train_sample_half_phoneme(datagen, save_dir, epochs, sortagrad,start_weights, mb_size=48)
+    
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
