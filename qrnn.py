@@ -6,6 +6,7 @@ from keras import backend as K
 from keras import activations, initializers, regularizers, constraints
 from keras.layers import Layer, InputSpec
 
+
 from keras.utils.conv_utils import conv_output_length
 
 import theano
