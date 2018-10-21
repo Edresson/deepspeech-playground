@@ -1,0 +1,1 @@
+RNNoise compiled for Ubuntu 16.04, if you have problem download and compile RNNoise, see:https://github.com/xiph/rnnoise

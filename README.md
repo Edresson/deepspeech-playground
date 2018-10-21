@@ -1,4 +1,7 @@
 # deepspeech-playground
+# new dependencies
+conda install -c conda-forge sox 
+conda install pydub
 
 This repo is a fork of [Baidu's DeepSpeech](https://github.com/baidu-research/ba-dls-deepspeech).  Unlike Baidu's repo:
 

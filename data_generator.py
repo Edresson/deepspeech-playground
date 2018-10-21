@@ -6,6 +6,14 @@ them to the network for training or testing.
 from __future__ import absolute_import, division, print_function
 
 import json
+"""
+Defines a class that is used to featurize audio clips, and provide
+them to the network for training or testing.
+"""
+
+from __future__ import absolute_import, division, print_function
+
+import json
 import logging
 import numpy as np
 import random
@@ -56,7 +64,7 @@ class DataGenerator(object):
             max_freq=self.max_freq)
 
     def load_metadata_from_desc_file(self, desc_file, partition='train',
-                                     max_duration=10.0,):
+                                     max_duration=10.0):
         """ Read metadata from the description file
             (possibly takes long, depending on the filesize)
         Params:
@@ -68,18 +76,18 @@ class DataGenerator(object):
         """
         logger.info('Reading description file: {} for partition: {}'
                     .format(desc_file, partition))
-        audio_paths, durations, texts = [], [], []
+        audio_paths, durations, texts, arpabets = [], [], [], []
         with open(desc_file) as json_line_file:
             for line_num, json_line in enumerate(json_line_file):
                 try:
-                    
-                    spec = json_line.replace('\n','').split(',')
-                    #print(json_line,spec)
-                    if float(spec[1]) > max_duration*10000 or spec[0] == 'filename':
+                    spec = json.loads(json_line)
+                    if float(spec['duration']) > max_duration:
                         continue
-                    audio_paths.append(spec[0])
-                    durations.append(float(spec[1]))
-                    texts.append(spec[2])
+                    audio_paths.append(spec['key'])
+                    durations.append(float(spec['duration']))
+                    texts.append(spec['text'])
+                    if self.use_arpabets:
+                        arpabets.append(spec['arpabet'])
                 except Exception as e:
                     # Change to (KeyError, ValueError) or
                     # (KeyError,json.decoder.JSONDecodeError), depending on
@@ -88,18 +96,24 @@ class DataGenerator(object):
                                 .format(line_num, json_line))
                     logger.warn(str(e))
 
+        if not self.use_arpabets:
+            arpabets = [''] * len(audio_paths)
+
         if partition == 'train':
             self.train_audio_paths = audio_paths
             self.train_durations = durations
             self.train_texts = texts
+            self.train_arpabets = arpabets
         elif partition == 'validation':
             self.val_audio_paths = audio_paths
             self.val_durations = durations
             self.val_texts = texts
+            self.val_arpabets = arpabets
         elif partition == 'test':
             self.test_audio_paths = audio_paths
             self.test_durations = durations
             self.test_texts = texts
+            self.test_arpabets = arpabets
         else:
             raise Exception("Invalid partition to load metadata. "
                             "Must be train/validation/test")
@@ -270,7 +284,7 @@ class DataGenerator(object):
         feats = np.vstack(feats)
         self.feats_mean = np.mean(feats, axis=0)
         self.feats_std = np.std(feats, axis=0)
-
+        
     def reload_norm(self,savefile=None,restorefile=None):
         """ Set mean and std of features from previous calculations
         Params:

@@ -1,8 +1,7 @@
 """
 Use this script to create JSON-Line description files that can be used to
 train deep-speech models through this library.
-This works with data directories that are organized like Common Voice.
-More about the dataset: https://voice.mozilla.org/en/data
+This works with data directories that are organized like TTS-Portuguese Corpus.
 """
 
 import argparse
@@ -15,7 +14,7 @@ def convert(desc_file,new_file):
             for line_num, json_line in enumerate(json_line_file):
                 try:
                     
-                    spec = json_line.replace('\n','').split(',')
+                    spec = json_line.replace('\n','').split('==')
                     if spec[0] == 'filename':
                         continue
                     speaker_path = desc_file.replace(desc_file.split('/')[-1],'')
