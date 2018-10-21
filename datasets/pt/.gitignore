@@ -1,3 +1,6 @@
+rnnoise/
+rnnoise/*
+/rnnoise/
 data/
 data/*
 /data/
