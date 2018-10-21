@@ -13,8 +13,11 @@ from keras.layers import (BatchNormalization, Convolution1D, Dense,
 from keras.models import Model
 from keras.optimizers import SGD
 #import lasagne
+from hyperparams import Hyperparams as hp 
 
 from utils import conv_output_length
+
+from qrnn import QRNN
 
 logger = logging.getLogger(__name__)
 
@@ -134,6 +137,10 @@ def compile_gru_model(input_dim=161, output_dim=29, recur_layers=3, nodes=1024,
                       initialization='glorot_uniform', batch_norm=True):
     """ Build a recurrent network (CTC) for speech with GRU units """
     logger.info("Building gru model")
+
+    if hp.language == 'pt':
+        output_dim = 42
+
     # Main acoustic input
     acoustic_input = Input(shape=(None, input_dim), name='acoustic_input')
 
@@ -152,6 +159,46 @@ def compile_gru_model(input_dim=161, output_dim=29, recur_layers=3, nodes=1024,
         output = GRU(nodes, activation='relu',
                      name='rnn_{}'.format(r + 1), init=initialization,
                      return_sequences=True)(output)
+        if batch_norm:
+            bn_layer = BatchNormalization(name='bn_rnn_{}'.format(r + 1),
+                                          mode=2)
+            output = bn_layer(output)
+
+    # We don't softmax here because CTC does that
+    network_output = TimeDistributed(Dense(
+        output_dim, name='dense', activation='linear', init=initialization,
+    ))(output)
+    model = Model(input=acoustic_input, output=network_output)
+    model.conv_output_length = lambda x: conv_output_length(
+        x, conv_context, conv_border_mode, conv_stride)
+    return model
+
+def compile_qrnn_model(input_dim=161, output_dim=29, recur_layers=3, nodes=1024,
+                      conv_context=11, conv_border_mode='valid', conv_stride=2,
+                      initialization='glorot_uniform', batch_norm=True):
+    """ Build a recurrent network (CTC) for speech with GRU units """
+    logger.info("Building gru model")
+    
+    if hp.language == 'pt':
+        output_dim = 42
+
+    # Main acoustic input
+    acoustic_input = Input(shape=(None, input_dim), name='acoustic_input')
+
+    # Setup the network
+    conv_1d = Convolution1D(nodes, conv_context, name='conv1d',
+                            border_mode=conv_border_mode,
+                            subsample_length=conv_stride, init=initialization,
+                            activation='relu')(acoustic_input)
+    if batch_norm:
+        output = BatchNormalization(name='bn_conv_1d', mode=2)(conv_1d)
+    else:
+        output = conv_1d
+    output = Dropout(.2)(output)
+
+    for r in range(recur_layers):
+        output = QRNN(nodes, activation='relu',
+                     name='qrnn_{}'.format(r + 1),return_sequences=True)(output)
         if batch_norm:
             bn_layer = BatchNormalization(name='bn_rnn_{}'.format(r + 1),
                                           mode=2)

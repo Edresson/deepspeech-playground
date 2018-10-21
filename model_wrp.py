@@ -13,6 +13,9 @@ from keras.layers.advanced_activations import LeakyReLU
 from keras.models import Model
 from keras.optimizers import Adam
 
+from hyperparams import Hyperparams as hp 
+from qrnn import QRNN
+
 if K.backend() == 'theano':
     import theano.gpuarray.ctc as ctc_th
     logging.info('using theano.gpuarray.ctc')
@@ -64,6 +67,22 @@ def duration_cost(y, y_pred):
     """" A Loss function for duration costs """
     return (y - y_pred)**2
 
+def compile_output_fn(model):
+    """ Build a function that simply calculates the output of a model
+    Args:
+        model: A keras model (built=True) instance
+    Returns:
+        output_fn (theano.function): Function that takes in acoustic inputs,
+            and returns network outputs
+    """
+    logger.info("Building val_fn")
+    acoustic_input = model.inputs[0]
+    network_output = model.outputs[0]
+    network_output = network_output.dimshuffle((1, 0, 2))
+
+    output_fn = K.function([acoustic_input, K.learning_phase()],
+                           [network_output])
+    return output_fn
 
 def model_output_dim(out_type):
     """ Return output dimention of model based on output type
@@ -280,6 +299,74 @@ class GruModelWrapper(ModelWrapper):
         self.branch_vars[output_branch.name] = self.model.trainable_weights
         self.acoustic_input = self.model.inputs[0]
         return self.model
+
+class QRnnModelWrapper(ModelWrapper):
+    """ Quasi-Recurrent network (CTC) for speech with QRNN units """
+
+    def compile(self, input_dim=161, recur_layers=3, nodes=1024,
+                conv_context=11, conv_border_mode='valid', conv_stride=2,
+                activation='relu', lirelu_alpha=.3, dropout=False,
+                initialization='glorot_uniform', batch_norm=True,
+                stateful=False, mb_size=None):
+        logger.info("Building gru model")
+        assert self.model is None
+
+        leaky_relu = False
+        if activation == 'lirelu':
+            activation = 'linear'
+            leaky_relu = True
+
+        if stateful:
+            if mb_size is None:
+                raise ValueError("Stateful QRNN layer needs to know batch size")
+            acoustic_input = Input(batch_shape=(mb_size, None, input_dim),
+                                   name='acoustic_input')
+        else:
+            acoustic_input = Input(shape=(None, input_dim),
+                                   name='acoustic_input')
+
+        # Setup the network
+        conv_1d = Conv1D(nodes, conv_context, name='conv_1d',
+                         padding=conv_border_mode, strides=conv_stride,
+                         kernel_initializer=initialization,
+                         activation=activation)(acoustic_input)
+
+        if batch_norm:
+            output = BatchNormalization(name='bn_conv_1d', mode=2)(conv_1d)
+        else:
+            output = conv_1d
+
+        if leaky_relu:
+            output = LeakyReLU(alpha=lirelu_alpha)(output)
+
+        if dropout:
+            output = Dropout(dropout)(output)
+
+        for r in range(recur_layers):
+            output = QRNN(nodes, name='rnn_{}'.format(r + 1),
+                         kernel_initializer=initialization,
+                         return_sequences=True, activation=activation)(output)
+
+            if batch_norm:
+                bn_layer = BatchNormalization(name='bn_rnn_{}'.format(r + 1),
+                                              mode=2)
+                output = bn_layer(output)
+
+            if leaky_relu:
+                output = LeakyReLU(alpha=lirelu_alpha)(output)
+
+        output_branch = TimeDistributed(Dense(
+            self.output_dim, name='text_dense', init=initialization,
+            activation=for_tf_or_th('softmax', 'linear')
+        ), name=self.outputs)
+        network_output = output_branch(output)
+
+        self.model = Model(input=acoustic_input, output=[network_output])
+        self.branch_outputs = [output_branch]
+        self.branch_vars[output_branch.name] = self.model.trainable_weights
+        self.acoustic_input = self.model.inputs[0]
+        return self.model
+
 
 
 class HalfPhonemeModelWrapper(ModelWrapper):

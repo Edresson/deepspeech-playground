@@ -22,8 +22,10 @@ from keras.preprocessing.sequence import pad_sequences
 
 from concurrent.futures import ThreadPoolExecutor, wait
 
-from utils import calc_feat_dim, spectrogram_from_file, text_to_int_sequence
+from utils import calc_feat_dim, spectrogram_from_file, text_to_int_sequence,text_normalize
 from arpabets import arpabet_to_int_sequence
+
+from hyperparams import Hyperparams as hp
 
 RNG_SEED = 123
 logger = logging.getLogger(__name__)
@@ -163,7 +165,8 @@ class DataGenerator(object):
             feat = features[i]
             feat = self.normalize(feat)  # Center using means and std
             x[i, :feat.shape[0], :] = feat
-            label = text_to_int_sequence(texts[i])
+            label = text_normalize(texts[i])
+            label = text_to_int_sequence(label)
             y.append(label)
             label_lengths.append(len(label))
         y = pad_sequences(y, maxlen=len(max(texts, key=len)), dtype='int32',

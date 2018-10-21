@@ -230,7 +230,19 @@ def argmax_decode(prediction):
     text = ''.join([index_map[i] for i in tokens])
     return text
 
-
+def text_normalize(text):
+    if hp.language == 'pt':
+        accents = ('COMBINING ACUTE ACCENT', 'COMBINING GRAVE ACCENT') #portuguese
+        chars = [c for c in unicodedata.normalize('NFD', text) if c not in accents]
+        text = unicodedata.normalize('NFC', ''.join(chars))# Strip accent
+    else:
+        text = ''.join(char for char in unicodedata.normalize('NFD', text)
+                           if unicodedata.category(char) != 'Mn') # Strip accent
+    text = text.lower()
+    text = re.sub("[^{}]".format(hp.vocab), " ", text)
+    text = re.sub("[ ]+", " ", text)
+    return text
+    
 def text_to_int_sequence(text):
     """ Use a character map and convert text to an integer sequence """
     int_sequence = []

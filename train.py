@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 def train_sample_half_phoneme(datagen, save_dir, epochs, sortagrad,
                               start_weights=False, mb_size=60):
-    model_wrp = GruModelWrapper()
+    model_wrp = HalfPhonemeModelWrapper() 
     model = model_wrp.compile(nodes=1000, conv_context=5, recur_layers=5)
     logger.info('model :\n%s' % (model.to_yaml(),))
 
@@ -38,7 +38,23 @@ def train_sample_half_phoneme(datagen, save_dir, epochs, sortagrad,
 
 def train_Gru_Model(datagen, save_dir, epochs, sortagrad,
                               start_weights=False, mb_size=60):
-    model_wrp = HalfPhonemeModelWrapper()
+    model_wrp = GruModelWrapper())
+    model = model_wrp.compile(nodes=1000, conv_context=5, recur_layers=5)
+    logger.info('model :\n%s' % (model.to_yaml(),))
+
+    if start_weights:
+        model.load_weights(start_weights)
+
+    train_fn, test_fn = (model_wrp.compile_train_fn(1e-4),
+                         model_wrp.compile_test_fn())
+    trainer = Trainer(model, train_fn, test_fn, on_text=hp.text, on_phoneme=hp.phoneme)
+    trainer.run(datagen, save_dir, epochs=epochs, do_sortagrad=sortagrad,
+                mb_size=mb_size, stateful=False)
+    return trainer, model_wrp
+
+def train_Qrnn_Model(datagen, save_dir, epochs, sortagrad,
+                              start_weights=False, mb_size=60):
+    model_wrp = QRnnModelWrapper())
     model = model_wrp.compile(nodes=1000, conv_context=5, recur_layers=5)
     logger.info('model :\n%s' % (model.to_yaml(),))
 
@@ -69,8 +85,9 @@ def main(train_desc_file, val_desc_file, epochs, save_dir, sortagrad,
     # of the features, so that we can center our inputs to the network
     datagen.reload_norm()
     batch_size = hp.batch_size
-    train_Gru_Model(datagen, save_dir, epochs, sortagrad,start_weights, mb_size=batch_size)
-    #train_sample_half_phoneme(datagen, save_dir, epochs, sortagrad,start_weights, mb_size=48)
+    train_Qrnn_Model(datagen, save_dir, epochs, sortagrad,start_weights, mb_size=batch_size)
+    #train_Gru_Model(datagen, save_dir, epochs, sortagrad,start_weights, mb_size=batch_size)
+    #train_sample_half_phoneme(datagen, save_dir, epochs, sortagrad,start_weights, mb_size=batch_size)
     
 
 if __name__ == '__main__':

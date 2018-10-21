@@ -47,7 +47,7 @@ def visualize(model, test_file, train_desc_file):
         train_desc_file(str): Path to the training file used to train this
                               model
     """
-    from model import compile_output_fn
+    from model_wrp import compile_output_fn
     from data_generator import DataGenerator
     from utils import argmax_decode
 
