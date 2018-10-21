@@ -15,6 +15,7 @@ def prepro(desc_file):
                 for json_line in json_line_file:
                     try:
                         spec = json.loads(json_line)
+                        os.system("sox "+spec['key']+" -r 48k "+spec['key'])
                         os.system("sox "+spec['key']+" --bits 16 --encoding signed-integer --endian little INPUT.raw")
                         os.system("./rnnoise/examples/rnnoise_demo INPUT.raw  out.raw")
                         os.system("sox  -e signed-integer -b 16 -r 48000  out.raw "+spec['key'])
