@@ -157,7 +157,7 @@ class DataGenerator(object):
             feat = features[i]
             feat = self.normalize(feat)  # Center using means and std
             x[i, :feat.shape[0], :] = feat
-            #texts[i] = text_normalize(texts[i])
+            texts[i] = text_normalize(texts[i])
             print(texts[i])
             label = text_to_int_sequence(texts[i])
             y.append(label)
@@ -254,7 +254,6 @@ class DataGenerator(object):
             temp = list(temp)
             self.rng.shuffle(temp)
             temp = list(temp)
-            print(temp)
             durations, audio_paths, texts, arpabets = zip(*temp)
             
 

@@ -241,7 +241,8 @@ def text_normalize(text):
         text = ''.join(char for char in unicodedata.normalize('NFD', text)
                            if unicodedata.category(char) != 'Mn') # Strip accent
     text = text.lower()
-    text = re.sub("[^{}]".format(hp.vocab), " ", text)
+    print(char_map,index_map)
+    text = re.sub("[^{}]".format(index_map), " ", text)
     text = re.sub("[ ]+", " ", text)
     return text
     
