@@ -39,11 +39,11 @@ if hp.language == 'pt':# portuguese
     ô 33
     ê 34
     í 35 
-    ú 37
-    û 38
-    á 39
-    é 40
-    ó 41
+    ú 36
+    û 37
+    á 38
+    é 39
+    ó 40
     """
 else: # english
     char_map_str = """
