@@ -253,7 +253,11 @@ class DataGenerator(object):
             print('antes bbbbbbbbbbbb',temp)
             self.rng.shuffle(list(temp))
             print('depois bbbbbbbbbbbb',temp)
-            durations, audio_paths, texts, arpabets = zip(*temp)
+            try:
+                durations, audio_paths, texts, arpabets = zip(*temp)
+            except:
+                durations, audio_paths, texts, arpabets = *temp
+
         if sort_by_duration:
             logger.info('Sorting training samples by duration')
             if getattr(self, '_sorted_data', None) is None:
