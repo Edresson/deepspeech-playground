@@ -44,6 +44,7 @@ if hp.language == 'pt':# portuguese
     á 38
     é 39
     ó 40
+    â 41
     """
 else: # english
     char_map_str = """
