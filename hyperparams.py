@@ -6,5 +6,4 @@ class Hyperparams:
     text = True # use Text for train
     phoneme = False # use Phoneme for train
     logdir = "logdir/" # directory for save checkpoints
-    batch_size = 15 # Batch Size
-
+    batch_size = 10 # Batch Size
