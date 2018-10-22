@@ -243,6 +243,7 @@ def text_normalize(text):
     text = text.lower()
     text = re.sub("[^{}]".format(vocab_string), " ", text)
     text = re.sub("[ ]+", " ", text)
+    print(text)
     return text
     
 def text_to_int_sequence(text):
