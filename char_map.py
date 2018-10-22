@@ -93,5 +93,5 @@ for line in char_map_str.strip().split('\n'):
     i = ctc_idx(int(index))
     char_map[ch] = i
     index_map[i] = ch
-print(vocab_string)
+vocab_string=vocab_string.replace('<SPACE>',' ') 
 index_map[ctc_idx(2)] = ' '
