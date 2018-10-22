@@ -313,4 +313,4 @@ class QRNN(Layer):
                   'input_dim': self.input_dim,
                   'input_length': self.input_length}
         base_config = super(QRNN, self).get_config()
-return dict(list(base_config.items()) + list(config.items()))
+        return dict(list(base_config.items()) + list(config.items()))
