@@ -84,11 +84,12 @@ def ctc_idx(i):
     elif K.backend() == 'theano':
         return i
     raise ValueError
-
+vocab_string = ''
 char_map = {}
 index_map = {}
 for line in char_map_str.strip().split('\n'):
     ch, index = line.split()
+    vocab_string = vocab_string+ch
     i = ctc_idx(int(index))
     char_map[ch] = i
     index_map[i] = ch

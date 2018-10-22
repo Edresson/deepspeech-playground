@@ -8,7 +8,7 @@ import keras
 from keras.models import model_from_json
 from numpy.lib.stride_tricks import as_strided
 
-from char_map import char_map, index_map
+from char_map import char_map, index_map,vocab_string
 from edit_distance import SequenceMatcher
 
 from hyperparams import Hyperparams as hp
@@ -241,8 +241,7 @@ def text_normalize(text):
         text = ''.join(char for char in unicodedata.normalize('NFD', text)
                            if unicodedata.category(char) != 'Mn') # Strip accent
     text = text.lower()
-    print(char_map,index_map)
-    text = re.sub("[^{}]".format(index_map), " ", text)
+    text = re.sub("[^{}]".format(vocab_string), " ", text)
     text = re.sub("[ ]+", " ", text)
     return text
     
