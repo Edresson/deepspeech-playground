@@ -225,8 +225,14 @@ def argmax_decode(prediction):
     for c in int_sequence:
         if c == c_prev:
             continue
-        if c != for_tf_or_th(28, 0):  # Blank
-            tokens.append(c)
+        if hp.language == 'eng':
+
+            if c != for_tf_or_th(28, 0):  # Blank
+                tokens.append(c)
+        else:
+            if c != for_tf_or_th(40, 0):  # Blank
+                tokens.append(c)
+
         c_prev = c
 
     text = ''.join([index_map[i] for i in tokens])
@@ -243,7 +249,6 @@ def text_normalize(text):
     text = text.lower()
     text = re.sub("[^{}]".format(vocab_string), " ", text)
     text = re.sub("[ ]+", " ", text)
-    print(text)
     return text
     
 def text_to_int_sequence(text):
