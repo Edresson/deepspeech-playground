@@ -250,7 +250,9 @@ class DataGenerator(object):
         print('Textos aaaa : ',texts)
         if shuffle:
             temp = zip(durations, audio_paths, texts, arpabets)
+            print('antes bbbbbbbbbbbb',temp)
             self.rng.shuffle(list(temp))
+            print('depois bbbbbbbbbbbb',temp)
             durations, audio_paths, texts, arpabets = zip(*temp)
         if sort_by_duration:
             logger.info('Sorting training samples by duration')
