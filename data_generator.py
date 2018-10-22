@@ -71,7 +71,7 @@ class DataGenerator(object):
         logger.info('Reading description file: {} for partition: {}'
                     .format(desc_file, partition))
         audio_paths, durations, texts, arpabets = [], [], [], []
-        with open(desc_file) as json_line_file:
+        with open(desc_file,encoding='utf-8') as json_line_file:
             for line_num, json_line in enumerate(json_line_file):
                 try:
                     spec = json.loads(json_line)
