@@ -44,7 +44,6 @@ if hp.language == 'pt':# portuguese
     á 38
     é 39
     ó 40
-    â 41
     """
 else: # english
     char_map_str = """
@@ -94,4 +93,5 @@ for line in char_map_str.strip().split('\n'):
     i = ctc_idx(int(index))
     char_map[ch] = i
     index_map[i] = ch
+print(vocab_string)
 index_map[ctc_idx(2)] = ' '
