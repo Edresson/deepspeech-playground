@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import keras.backend as K
 from hyperparams import Hyperparams as hp
 
