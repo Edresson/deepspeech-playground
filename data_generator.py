@@ -71,10 +71,10 @@ class DataGenerator(object):
         logger.info('Reading description file: {} for partition: {}'
                     .format(desc_file, partition))
         audio_paths, durations, texts, arpabets = [], [], [], []
-        with open(desc_file,encoding='utf8') as json_line_file:
+        with open(desc_file,'r',encoding='utf8') as json_line_file:
             for line_num, json_line in enumerate(json_line_file):
                 try:
-                    spec = json.loads(json_line)
+                    spec = json.loads(json_line,ensure_ascii=False)
                     if float(spec['duration']) > max_duration:
                         continue
                     audio_paths.append(spec['key'])
