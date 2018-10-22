@@ -157,8 +157,8 @@ class DataGenerator(object):
             feat = features[i]
             feat = self.normalize(feat)  # Center using means and std
             x[i, :feat.shape[0], :] = feat
-            label = text_normalize(texts[i])
-            label = text_to_int_sequence(label)
+            #texts[i] = text_normalize(texts[i])
+            label = text_to_int_sequence(texts[i])
             y.append(label)
             label_lengths.append(len(label))
         y = pad_sequences(y, maxlen=len(max(texts, key=len)), dtype='int32',
