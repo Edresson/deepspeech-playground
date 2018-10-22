@@ -16,7 +16,7 @@ import unicodedata
 logger = logging.getLogger(__name__)
 
 k2 = keras.__version__[0] == '2'
-unicodeunicodedata
+
 
 def calc_feat_dim(window, max_freq):
     return int(0.001 * window * max_freq) + 1
