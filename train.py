@@ -38,7 +38,7 @@ def train_sample_half_phoneme(datagen, save_dir, epochs, sortagrad,
 
 def train_Gru_Model(datagen, save_dir, epochs, sortagrad,
                               start_weights=False, mb_size=60):
-    model_wrp = GruModelWrapper())
+    model_wrp = GruModelWrapper()
     model = model_wrp.compile(nodes=1000, conv_context=5, recur_layers=5)
     logger.info('model :\n%s' % (model.to_yaml(),))
 
@@ -54,7 +54,7 @@ def train_Gru_Model(datagen, save_dir, epochs, sortagrad,
 
 def train_Qrnn_Model(datagen, save_dir, epochs, sortagrad,
                               start_weights=False, mb_size=60):
-    model_wrp = QRnnModelWrapper())
+    model_wrp = QRnnModelWrapper()
     model = model_wrp.compile(nodes=1000, conv_context=5, recur_layers=5)
     logger.info('model :\n%s' % (model.to_yaml(),))
 
