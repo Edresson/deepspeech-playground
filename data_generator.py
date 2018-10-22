@@ -158,6 +158,7 @@ class DataGenerator(object):
             feat = self.normalize(feat)  # Center using means and std
             x[i, :feat.shape[0], :] = feat
             #texts[i] = text_normalize(texts[i])
+            print(texts[i])
             label = text_to_int_sequence(texts[i])
             y.append(label)
             label_lengths.append(len(label))
