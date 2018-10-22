@@ -13,7 +13,7 @@ import os
 from data_generator import DataGenerator
 from utils import configure_logging
 
-from model_wrp import HalfPhonemeModelWrapper,GruModelWrapper
+from model_wrp import HalfPhonemeModelWrapper,GruModelWrapper,QRnnModelWrapper
 from trainer import Trainer
 from hyperparams import Hyperparams as hp
 
