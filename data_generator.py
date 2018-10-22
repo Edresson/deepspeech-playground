@@ -251,7 +251,9 @@ class DataGenerator(object):
         if shuffle:
             temp = zip(durations, audio_paths, texts, arpabets)
             print(temp)
-            self.rng.shuffle(list(temp))
+            temp = list(temp)
+            self.rng.shuffle(temp)
+            temp = list(temp)
             print(temp)
             durations, audio_paths, texts, arpabets = zip(*temp)
             
