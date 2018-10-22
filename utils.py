@@ -11,6 +11,8 @@ from numpy.lib.stride_tricks import as_strided
 from char_map import char_map, index_map
 from edit_distance import SequenceMatcher
 
+from hyperparams import Hyperparams as hp
+
 logger = logging.getLogger(__name__)
 
 k2 = keras.__version__[0] == '2'
