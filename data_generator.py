@@ -249,7 +249,7 @@ class DataGenerator(object):
                                                    self.train_arpabets)
         if shuffle:
             temp = zip(durations, audio_paths, texts, arpabets)
-            self.rng.shuffle(temp)
+            self.rng.shuffle(list(temp))
             durations, audio_paths, texts, arpabets = zip(*temp)
         if sort_by_duration:
             logger.info('Sorting training samples by duration')
