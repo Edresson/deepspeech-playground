@@ -1,0 +1,2 @@
+conda install keras-gpu==2.0.5
+pip install soundfile edit_distance

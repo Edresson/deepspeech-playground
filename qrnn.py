@@ -9,8 +9,6 @@ from keras.layers import Layer, InputSpec
 
 from keras.utils.conv_utils import conv_output_length
 
-import theano
-import theano.tensor as T
 
 
 def _dropout(x, level, noise_shape=None, seed=None):
