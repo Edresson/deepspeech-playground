@@ -247,6 +247,7 @@ class DataGenerator(object):
                                                    self.train_audio_paths,
                                                    self.train_texts,
                                                    self.train_arpabets)
+        print('Textos aaaa : ',texts)
         if shuffle:
             temp = zip(durations, audio_paths, texts, arpabets)
             self.rng.shuffle(list(temp))
