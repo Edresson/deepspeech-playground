@@ -247,7 +247,6 @@ def text_normalize(text):
     
 def text_to_int_sequence(text):
     """ Use a character map and convert text to an integer sequence """
-    print('texto: ',text)
     int_sequence = []
     for c in text:
         if c == ' ':
