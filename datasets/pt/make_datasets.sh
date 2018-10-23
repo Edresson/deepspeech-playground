@@ -12,5 +12,9 @@ echo 'The datasets were successfully generated'
 echo 'Use Train_dataset.csv for train and Test_dataset.csv for test'
 echo '********************************************************************'
 
-
-
+git clone https://github.com/xiph/rnnoise.git
+cd rnnoise
+./autogen.sh
+./configure
+make
+cd ..

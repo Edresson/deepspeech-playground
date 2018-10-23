@@ -4,3 +4,4 @@ data/*
 *.csv
 __pycache__/*
 __pycache__/
+rnnoise/*
