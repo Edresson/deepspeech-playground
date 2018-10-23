@@ -8,7 +8,7 @@ import argparse
 import json
 import wave
 import os
-
+from utils import calc_feat_dim, spectrogram_from_file, text_to_int_sequence,text_normalize
 def convert(desc_file,new_file):
     with open(new_file,'w') as file:
         with open(desc_file) as json_line_file:
@@ -23,6 +23,21 @@ def convert(desc_file,new_file):
                     audio = wave.open(audio_file)
                     duration = float(audio.getnframes()) / audio.getframerate()
                     audio.close()
+                    textlen= len(text_to_int_sequence(text_normalize(spec[1])))
+                    speclen= len(spectrogram_from_file(audio_file))
+                    if textlen >  speclen :
+                            print('label maior que feats')
+                            print('remove line: ',spec[1],textlen,speclen)
+                            continue
+                    if textlen < 2:
+                        print('label pequeno')
+                        print('remove line: ',spec[1],textlen,speclen)
+                        continue
+
+                    if len(spectrogram_from_file(audio_file)) < 5:
+                        print('label pequeno')
+                        print('remove line: ',spec[1],textlen,speclen)
+                        continue
                     line = json.dumps({'key': audio_file, 'duration': duration,
                               'text': spec[1]},ensure_ascii=False)
                     file.write(line + '\n')
@@ -30,7 +45,7 @@ def convert(desc_file,new_file):
                     # Change to (KeyError, ValueError) or
                     # (KeyError,json.decoder.JSONDecodeError), depending on
                     # json module version
-                    print(e)
+                    print("Erro: ",e)
                     continue
 
 

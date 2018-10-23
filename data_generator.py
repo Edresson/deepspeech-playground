@@ -77,6 +77,14 @@ class DataGenerator(object):
                     spec = json.loads(json_line)
                     if float(spec['duration']) > max_duration:
                         continue
+                    textlen= len(text_to_int_sequence(text_normalize(spec['text'])))
+                    speclen= len(spectrogram_from_file(spec['key']))
+                    if textlen >  speclen :
+                            print('label > feats ignore setence')
+                            continue
+                    if textlen < 2:
+                        print('small label ignore setence')
+                        continue
                     audio_paths.append(spec['key'])
                     durations.append(float(spec['duration']))
                     texts.append(spec['text'])
