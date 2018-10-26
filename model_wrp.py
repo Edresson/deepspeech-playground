@@ -78,7 +78,8 @@ def compile_output_fn(model):
     logger.info("Building val_fn")
     acoustic_input = model.inputs[0]
     network_output = model.outputs[0]
-    network_output = network_output.dimshuffle((1, 0, 2))
+    if K.backend() == 'theano':
+            output = network_output.dimshuffle((1, 0, 2))
 
     output_fn = K.function([acoustic_input, K.learning_phase()],
                            [network_output])
