@@ -17,12 +17,9 @@ def load_model_wrapper(model_config_file, weights_file):
     try:
         os.environ['KERAS_BACKEND'] = model_config['backend']
         import model_wrp
-        # pretrained_id = model_config['pre-trained-id']
-        wrapper_config = model_config['model_wrapper']
-        wrapper_class = getattr(sys.modules['model_wrp'],
-                                wrapper_config['class_name'])
-        model_wrapper = wrapper_class(**wrapper_config.get('init_args', {}))
-        model = model_wrapper.compile(**wrapper_config.get('compile_args', {}))
+        wrapper_class = getattr(sys.modules['model_wrp'],hp.model)
+        model_wrapper = wrapper_class()
+        model = model_wrapper.compile(**hp.args_model)
         model.load_weights(weights_file)
     except (KeyError, ):
         print ("Model is not known")

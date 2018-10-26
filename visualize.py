@@ -96,7 +96,7 @@ def interactive_vis(model_dir, model_config, train_desc_file, weights_file=None)
     if model_dir is None:
         assert weights_file is not None
         if model_config is None:
-            from model_wrp import HalfPhonemeModelWrapper, GruModelWrapper
+            from model_wrp import HalfPhonemeModelWrapper, GruModel
             print ("""Make and store new model into model, e.g.
                 >>> model_wrp = HalfPhonemeModelWrapper()
                 >>> model = model_wrp.compile(nodes=1000, recur_layers=5,

@@ -233,7 +233,7 @@ class ModelWrapper(object):
         return output_fn
 
 
-class GruModelWrapper(ModelWrapper):
+class GruModel(ModelWrapper):
     """ Recurrent network (CTC) for speech with GRU units """
 
     def compile(self, input_dim=161, recur_layers=3, nodes=1024,
@@ -300,11 +300,11 @@ class GruModelWrapper(ModelWrapper):
         self.acoustic_input = self.model.inputs[0]
         return self.model
 
-class QRnnModelWrapper(ModelWrapper):
+class QRnnModel(ModelWrapper):
     """ Quasi-Recurrent network (CTC) for speech with QRNN units """
 
-    def compile(self, input_dim=161, recur_layers=3, nodes=1024,
-                conv_context=11, conv_border_mode='valid', conv_stride=2,
+    def compile(self, input_dim=161, recur_layers=5, nodes=1000,
+                conv_context=5, conv_border_mode='valid', conv_stride=2,
                 activation='relu', lirelu_alpha=.3, dropout=False,
                 initialization='glorot_uniform', batch_norm=True,
                 stateful=False, mb_size=None):

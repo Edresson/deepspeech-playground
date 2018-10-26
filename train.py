@@ -13,7 +13,7 @@ import os
 from data_generator import DataGenerator
 from utils import configure_logging
 
-from model_wrp import HalfPhonemeModelWrapper,GruModelWrapper,QRnnModelWrapper
+from model_wrp import HalfPhonemeModelWrapper,GruModel,QRnnModel
 from trainer import Trainer
 from hyperparams import Hyperparams as hp
 
@@ -38,7 +38,7 @@ def train_sample_half_phoneme(datagen, save_dir, epochs, sortagrad,
 
 def train_Gru_Model(datagen, save_dir, epochs, sortagrad,
                               start_weights=False, mb_size=60):
-    model_wrp = GruModelWrapper()
+    model_wrp = GruModel()
     model = model_wrp.compile(nodes=1000, conv_context=5, recur_layers=5)
     logger.info('model :\n%s' % (model.to_yaml(),))
 
@@ -54,7 +54,7 @@ def train_Gru_Model(datagen, save_dir, epochs, sortagrad,
 
 def train_Qrnn_Model(datagen, save_dir, epochs, sortagrad,
                               start_weights=False, mb_size=60):
-    model_wrp = QRnnModelWrapper()
+    model_wrp = QRnnModel()
     model = model_wrp.compile(nodes=1000, conv_context=5, recur_layers=5)
     logger.info('model :\n%s' % (model.to_yaml(),))
 

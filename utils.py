@@ -163,6 +163,8 @@ def save_model(save_dir, model, train=None, validation=None, wer=None,
     model_config_path = os.path.join(save_dir, 'model_config.json')
     with open(model_config_path, 'w') as model_config_file:
         model_json = model.to_json()
+        print('Type: 'type(model_json)
+        print(model_json)
         model_config_file.write(model_json)
     if index is None:
         weights_format = 'model_weights.h5'
