@@ -85,8 +85,8 @@ def main(train_desc_file, val_desc_file, epochs, save_dir, sortagrad,
     # of the features, so that we can center our inputs to the network
     datagen.reload_norm()
     batch_size = hp.batch_size
-    #train_Qrnn_Model(datagen, save_dir, epochs, sortagrad,start_weights, mb_size=batch_size)
-    train_Gru_Model(datagen, save_dir, epochs, sortagrad,start_weights, mb_size=batch_size)
+    train_Qrnn_Model(datagen, save_dir, epochs, sortagrad,start_weights, mb_size=batch_size)
+    #train_Gru_Model(datagen, save_dir, epochs, sortagrad,start_weights, mb_size=batch_size)
     #train_sample_half_phoneme(datagen, save_dir, epochs, sortagrad,start_weights, mb_size=batch_size)
     
 
