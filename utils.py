@@ -234,7 +234,7 @@ def argmax_decode(prediction):
             if c != for_tf_or_th(28, 0):  # Blank
                 tokens.append(c)
         else:
-            if c != for_tf_or_th(40, 0):  # Blank
+            if c != for_tf_or_th(43, 0):  # Blank
                 tokens.append(c)
 
         c_prev = c
