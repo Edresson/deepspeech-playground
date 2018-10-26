@@ -18,6 +18,8 @@ logger = logging.getLogger(__name__)
 k2 = keras.__version__[0] == '2'
 
 
+from qrnn import QRNN
+
 def calc_feat_dim(window, max_freq):
     return int(0.001 * window * max_freq) + 1
 
@@ -199,7 +201,7 @@ def load_model(load_dir, weights_file=None):
 
     model_config_file = os.path.join(load_dir, 'model_config.json')
     model_config = open(model_config_file).read()
-    model = model_from_json(model_config)
+    model = model_from_json(model_config,custom_objects={'QRNN': QRNN})
 
     if weights_file is None:
         # This will find all files of name model_*weights.h5

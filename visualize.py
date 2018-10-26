@@ -39,21 +39,18 @@ def prompt_loop(prompt_line, locs):
     return locs
 
 
-def visualize(model, test_file, train_desc_file):
+def visualize(model, test_file):
     """ Get the prediction using the model, and visualize softmax outputs
     Params:
         model (keras.models.Model): Trained speech model
         test_file (str): Path to an audio clip
-        train_desc_file(str): Path to the training file used to train this
-                              model
     """
     from model_wrp import compile_output_fn
     from data_generator import DataGenerator
     from utils import argmax_decode
 
     datagen = DataGenerator()
-    datagen.load_train_data(train_desc_file)
-    datagen.fit_train(100)
+    datagen.reload_norm()
 
     print ("Compiling test function...")
     test_fn = compile_output_fn(model)
@@ -96,7 +93,7 @@ def interactive_vis(model_dir, model_config, train_desc_file, weights_file=None)
     if model_dir is None:
         assert weights_file is not None
         if model_config is None:
-            from model_wrp import HalfPhonemeModelWrapper, GruModel
+            from model_wrp import HalfPhonemeModelWrapper, GruModel,QRnnModel
             print ("""Make and store new model into model, e.g.
                 >>> model_wrp = HalfPhonemeModelWrapper()
                 >>> model = model_wrp.compile(nodes=1000, recur_layers=5,
@@ -185,12 +182,9 @@ def main():
         by this repo give model config by --model-config.
         """)
     parser.add_argument('--test-file', type=str, help='Path to an audio file')
-    parser.add_argument('--train-desc-file', type=str,
-                        help='Path to the training JSON-line file. This will '
-                             'be used to extract feature means/variance')
-    parser.add_argument('--load-dir', type=str,
+    parser.add_argument('--load-dir', type=str, default=None,
                         help='Directory where a trained model is stored.')
-    parser.add_argument('--model-config', type=str,
+    parser.add_argument('--model-config', type=str, default=None,
                         help='Path to pre-trained model configuration')
     parser.add_argument('--weights-file', type=str, default=None,
                         help='Path to a model weights file')
@@ -211,7 +205,7 @@ def main():
 
         print ("Loading model")
         model = load_model(args.load_dir, args.weights_file)
-        visualize(model, args.test_file, args.train_desc_file)
+        visualize(model, args.test_file)
 
 
 if __name__ == '__main__':
