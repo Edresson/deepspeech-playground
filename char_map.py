@@ -2,7 +2,7 @@
 import keras.backend as K
 from hyperparams import Hyperparams as hp
 
-#abcdefghijklmnopqrstuvwxyzçãàáêéíóôõúû.?
+#abcdefghijklmnopqrstuvwxyzçãàáâêéíóôõúû.?
 if hp.language == 'pt':# portuguese
     char_map_str = """
     ? 1
