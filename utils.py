@@ -165,8 +165,6 @@ def save_model(save_dir, model, train=None, validation=None, wer=None,
     model_config_path = os.path.join(save_dir, 'model_config.json')
     with open(model_config_path, 'w') as model_config_file:
         model_json = model.to_json()
-        print('Type: ',type(model_json))
-        print(model_json)
         model_config_file.write(model_json)
     if index is None:
         weights_format = 'model_weights.h5'
@@ -359,6 +357,9 @@ def word_error_rate(true_labels, pred_labels, decoded=False):
         # errors = [c for c in seq_matcher.get_opcodes() if c[0] != 'equal']
         # error_lens = [max(e[4] - e[3], e[2] - e[1]) for e in errors]
         # wers[i] = sum(error_lens) / float(len(true_label.split()))
+        true_label = text_normalize(true_label)
+        print('Esperado: ',true_label)
+        print('Predito: ',prediction)
         wers[i] = wer(true_label, prediction)
         i += 1
     return wers

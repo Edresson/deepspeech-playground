@@ -292,7 +292,7 @@ class DataGenerator(object):
         self.feats_mean = np.mean(feats, axis=0)
         self.feats_std = np.std(feats, axis=0)
         
-    def reload_norm(self,savefile=None,restorefile=None):
+    def reload_norm(self,savefile=None,restorefile=None, k_samples=100):
         """ Set mean and std of features from previous calculations
         Params:
             savefile (str): used for save

@@ -83,7 +83,7 @@ def main(train_desc_file, val_desc_file, epochs, save_dir, sortagrad,
     datagen.load_validation_data(val_desc_file)
     # Use a few samples from the dataset, to calculate the means and variance
     # of the features, so that we can center our inputs to the network
-    datagen.reload_norm()
+    datagen.reload_norm(train_desc_file)
     batch_size = hp.batch_size
     train_Qrnn_Model(datagen, save_dir, epochs, sortagrad,start_weights, mb_size=batch_size)
     #train_Gru_Model(datagen, save_dir, epochs, sortagrad,start_weights, mb_size=batch_size)
