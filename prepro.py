@@ -22,19 +22,19 @@ def prepro(desc_file):
                         spec = json.loads(json_line)
 
                         if hp.phoneme:  
-                        if hp.language='pt':   
-                            keys.append(spec['key'])
-                            durations.append(spec['duration'])
-                            words = spec['text'].strip().lower().split(' ')
-                            transcrito = [] 
-                            for word in words:
-                                # Initialize g2p transcriber
-                                g2p = G2PTranscriber(word, algorithm='silva')
-                                # Write file
-                                #print(g2p.transcriber())
-                                transcrito.append(g2p.transcriber())
-                            labels.append(" ".join(transcrito))
-                        
+                            if hp.language='pt':   
+                                keys.append(spec['key'])
+                                durations.append(spec['duration'])
+                                words = spec['text'].strip().lower().split(' ')
+                                transcrito = [] 
+                                for word in words:
+                                    # Initialize g2p transcriber
+                                    g2p = G2PTranscriber(word, algorithm='silva')
+                                    # Write file
+                                    #print(g2p.transcriber())
+                                    transcrito.append(g2p.transcriber())
+                                labels.append(" ".join(transcrito))
+                            
                         os.system("sox "+spec['key']+" -r 48k "+spec['key'])
                         os.system("sox "+spec['key']+" --bits 16 --encoding signed-integer --endian little INPUT.raw")
                         os.system("./rnnoise/examples/rnnoise_demo INPUT.raw  out.raw")
@@ -43,16 +43,12 @@ def prepro(desc_file):
                         normalized_sound = match_target_amplitude(sound, -20.0)
                         normalized_sound.export(spec['key'], format="wav")
 
-
-
-
-            with open(output_file, 'w') as out_file:
-                for i in range(len(keys)):
-                    line = json.dumps({'key': keys[i], 'duration': durations[i],
-                                    'text': labels[i]},ensure_ascii=False)
-                    out_file.write(line + '\n')
-
-
+                        if hp.phoneme:
+                            with open(output_file, 'w') as out_file:
+                                for i in range(len(keys)):
+                                    line = json.dumps({'key': keys[i], 'duration': durations[i],
+                                                    'text': labels[i]},ensure_ascii=False)
+                                    out_file.write(line + '\n')
 
                     except Exception as e:
                         print(e)
