@@ -16,8 +16,7 @@ def prepro(desc_file):
     durations =[]
     labels = []
     with open(desc_file) as json_line_file:
-                for json_line in json_line_file:7
-                    
+                for json_line in json_line_file:
                     try:
                         spec = json.loads(json_line)
 
